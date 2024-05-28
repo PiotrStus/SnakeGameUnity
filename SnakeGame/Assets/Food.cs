@@ -6,23 +6,15 @@ public class Food : MonoBehaviour
 {
     public BoxCollider2D area;
     public float minDistanceFromSnake = 1.0f;
-    // Metoda wywo³ywana przy starcie
+    // Metodh executed when the program start
     void Start()
     {
         MoveFood();
     }
-
-    // Metoda wywo³ywana co klatkê
-    void Update()
-    {
-    }
-
-
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Kolizja z wê¿em!");
             MoveFood();
             other.gameObject.GetComponent<Snake>().Grow();
         }
@@ -31,8 +23,6 @@ public class Food : MonoBehaviour
     {
         Bounds bounds = this.area.bounds;
         Vector3 newPosition;
-
-        // Pêtla do znajdowania odpowiedniej pozycji
         do
         {
             float x = Random.Range(bounds.min.x, bounds.max.x);
@@ -40,10 +30,8 @@ public class Food : MonoBehaviour
             newPosition = new Vector3(Mathf.Round(x), Mathf.Round(y), 0f);
         }
         while (IsPositionCloseToSnake(newPosition));
-
         transform.position = newPosition;
     }
-
     bool IsPositionCloseToSnake(Vector3 position)
     {
         GameObject snake = GameObject.FindWithTag("Player");
@@ -51,11 +39,9 @@ public class Food : MonoBehaviour
         {
             if (Vector3.Distance(position, segment.position) < minDistanceFromSnake)
             {
-                return true;  // Pozycja jest zbyt blisko wê¿a
+                return true;
             }
         }
-        return false;  // Pozycja jest odpowiednia
+        return false;
     }
 }
-
-
