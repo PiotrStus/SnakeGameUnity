@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Food : MonoBehaviour
 {
-
+    public BoxCollider2D area;
+    public float minDistanceFromSnake = 1.0f;
     // Metoda wywo³ywana przy starcie
     void Start()
     {
+        MoveFood();
     }
 
     // Metoda wywo³ywana co klatkê
@@ -22,16 +24,38 @@ public class Food : MonoBehaviour
         {
             Debug.Log("Kolizja z wê¿em!");
             MoveFood();
-
-            //other.GetComponent<Snake>().Grow();
+            other.gameObject.GetComponent<Snake>().Grow();
         }
     }
     void MoveFood()
     {
-        // Generowanie nowej losowej pozycji w okreœlonym zakresie
-        float x = Random.Range(-8.0f, 8.0f);
-        float y = Random.Range(-4.0f, 4.0f);
-        transform.position = new Vector2(x, y);
+        Bounds bounds = this.area.bounds;
+        Vector3 newPosition;
+
+        // Pêtla do znajdowania odpowiedniej pozycji
+        do
+        {
+            float x = Random.Range(bounds.min.x, bounds.max.x);
+            float y = Random.Range(bounds.min.y, bounds.max.y);
+            newPosition = new Vector3(Mathf.Round(x), Mathf.Round(y), 0f);
+        }
+        while (IsPositionCloseToSnake(newPosition));
+
+        transform.position = newPosition;
+    }
+
+    bool IsPositionCloseToSnake(Vector3 position)
+    {
+        GameObject snake = GameObject.FindWithTag("Player");
+        foreach (Transform segment in snake.GetComponent<Snake>().tailSegments)
+        {
+            if (Vector3.Distance(position, segment.position) < minDistanceFromSnake)
+            {
+                return true;  // Pozycja jest zbyt blisko wê¿a
+            }
+        }
+        return false;  // Pozycja jest odpowiednia
     }
 }
+
 
